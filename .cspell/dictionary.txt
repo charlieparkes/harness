@@ -1,0 +1,9 @@
+# Custom Dictionary Words
+charlieparkes
+charmbracelet
+colorprofile
+Crockford
+lipgloss
+testsize
+worktree
+worktrees
