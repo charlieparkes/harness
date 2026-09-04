@@ -1,0 +1,10 @@
+{
+    "cSpell.customDictionaries": {
+        "harness-dictionary": {
+            "name": "harness-dictionary",
+            "path": "${workspaceFolder:harness}/.cspell/dictionary.txt",
+            "addWords": true,
+            "scope": "folder"
+        }
+    }
+}

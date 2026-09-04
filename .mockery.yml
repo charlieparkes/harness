@@ -1,0 +1,29 @@
+all: false
+dir: '{{.InterfaceDir}}'
+filename: mocks_test.go
+force-file-write: true
+formatter: goimports
+structname: '{{.Mock}}{{.InterfaceName}}'
+pkgname: '{{.SrcPackageName}}'
+template: testify
+packages:
+  github.com/charlieparkes/harness/cmd/harness:
+    config:
+      all: true
+  github.com/charlieparkes/harness/internal/harness:
+    config:
+      all: true
+      recursive: true
+  github.com/charlieparkes/harness/internal/logger:
+    config:
+      all: true
+  github.com/charlieparkes/harness/internal/shared:
+    config:
+      all: true
+  github.com/charlieparkes/harness/internal/store/sqlite:
+    config:
+      all: true
+      recursive: true
+  github.com/charlieparkes/harness/internal/store/stub:
+    config:
+      all: true
