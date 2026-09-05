@@ -16,7 +16,7 @@ func TestStatusString(t *testing.T) {
 	}{
 		{TaskStatusReady, "Ready"},
 		{TaskStatusRunning, "Running"},
-		{TaskStatusPendingFeedback, "Pending Feedback"},
+		{TaskStatusPendingFeedback, "PendingFeedback"},
 		{TaskStatusCompleted, "Completed"},
 		{TaskStatusCanceled, "Canceled"},
 		{TaskStatusFailed, "Failed"},
@@ -43,7 +43,7 @@ func TestStatusText(t *testing.T) {
 	}{
 		{name: "ready", status: TaskStatusReady, symbol: "○", text: "○ Ready"},
 		{name: "running", status: TaskStatusRunning, symbol: "●", text: "● Running"},
-		{name: "pending feedback", status: TaskStatusPendingFeedback, symbol: "◐", text: "◐ Pending Feedback"},
+		{name: "pending feedback", status: TaskStatusPendingFeedback, symbol: "◐", text: "◐ PendingFeedback"},
 		{name: "completed", status: TaskStatusCompleted, symbol: "✓", text: "✓ Completed"},
 		{name: "canceled", status: TaskStatusCanceled, symbol: "⦸", text: "⦸ Canceled"},
 		{name: "failed", status: TaskStatusFailed, symbol: "✕", text: "✕ Failed"},
