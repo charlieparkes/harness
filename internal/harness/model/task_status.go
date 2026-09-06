@@ -3,7 +3,7 @@ package model
 //go:generate go tool go-enum
 
 // TaskStatus is the lifecycle state of a task.
-// ENUM(Unspecified, Ready, Running, Pending Feedback, Completed, Canceled, Failed)
+// ENUM(Unspecified, Ready, Running, PendingFeedback, Completed, Canceled, Failed)
 type TaskStatus string
 
 // Symbol returns the display glyph for this status.

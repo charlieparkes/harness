@@ -17,8 +17,8 @@ const (
 	TaskStatusReady TaskStatus = "Ready"
 	// TaskStatusRunning is a TaskStatus of type Running.
 	TaskStatusRunning TaskStatus = "Running"
-	// TaskStatusPendingFeedback is a TaskStatus of type Pending Feedback.
-	TaskStatusPendingFeedback TaskStatus = "Pending Feedback"
+	// TaskStatusPendingFeedback is a TaskStatus of type PendingFeedback.
+	TaskStatusPendingFeedback TaskStatus = "PendingFeedback"
 	// TaskStatusCompleted is a TaskStatus of type Completed.
 	TaskStatusCompleted TaskStatus = "Completed"
 	// TaskStatusCanceled is a TaskStatus of type Canceled.
@@ -42,13 +42,13 @@ func (x TaskStatus) IsValid() bool {
 }
 
 var _TaskStatusValue = map[string]TaskStatus{
-	"Unspecified":      TaskStatusUnspecified,
-	"Ready":            TaskStatusReady,
-	"Running":          TaskStatusRunning,
-	"Pending Feedback": TaskStatusPendingFeedback,
-	"Completed":        TaskStatusCompleted,
-	"Canceled":         TaskStatusCanceled,
-	"Failed":           TaskStatusFailed,
+	"Unspecified":     TaskStatusUnspecified,
+	"Ready":           TaskStatusReady,
+	"Running":         TaskStatusRunning,
+	"PendingFeedback": TaskStatusPendingFeedback,
+	"Completed":       TaskStatusCompleted,
+	"Canceled":        TaskStatusCanceled,
+	"Failed":          TaskStatusFailed,
 }
 
 // ParseTaskStatus attempts to convert a string to a TaskStatus.

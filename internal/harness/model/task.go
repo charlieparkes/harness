@@ -8,11 +8,13 @@ import (
 
 // Task is the minimal identity and display text shown in the task list.
 type Task struct {
-	ID        string
-	Title     string
-	Status    TaskStatus
-	CreatedAt time.Time
-	UpdatedAt *time.Time
+	ID               string
+	Title            string
+	Description      string
+	Status           TaskStatus
+	AutomationPolicy AutomationPolicy
+	CreatedAt        time.Time
+	UpdatedAt        *time.Time
 }
 
 // NewTask returns a ready task with a Crockford Base32 nanoid ID and the current UTC time.
