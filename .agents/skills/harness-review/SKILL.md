@@ -1,10 +1,10 @@
 ---
-name: my-review
+name: harness-review
 version: 1.0.0
 description: |
   Review code changes against the original plan used to make them. Use when
   reviewing plan execution, diffs produced from a plan, or when the user
-  invokes /my-review with a plan path, @-file, or URL.
+  invokes /harness-review with a plan path, @-file, or URL.
 compatibility: claude-code cursor codex gemini-cli opencode
 argument-hint: <plan>
 arguments: [plan]
@@ -14,7 +14,7 @@ arguments: [plan]
 
 ## Original Plan
 
-Accept `/my-review <plan>`. `<plan>` (`$ARGUMENTS` / `$plan`) is a
+Accept `/harness-review <plan>`. `<plan>` (`$ARGUMENTS` / `$plan`) is a
 workspace path, @-file, URL, or pasted plan text. Read or fetch it
 before reviewing. If `$ARGUMENTS` is unsubstituted, take `<plan>` from
 the invocation.

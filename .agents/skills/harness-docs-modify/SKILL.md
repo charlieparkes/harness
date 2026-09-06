@@ -1,5 +1,5 @@
 ---
-name: modify-documentation
+name: harness-docs-modify
 version: 1.0.0
 description: |
   Instructions on how to modify existing documentation.
