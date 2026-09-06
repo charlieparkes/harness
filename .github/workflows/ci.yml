@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: .tool-versions
+
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version-file: .tool-versions
+          install-only: true
+
+      - run: make lint
+      - run: make test
+      - run: make bin/harness
