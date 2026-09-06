@@ -1,10 +1,22 @@
 # Custom Dictionary Words
+agentmodel
+brianvoe
+bubbletea
 charlieparkes
 charmbracelet
 colorprofile
-Crockford
+crockford
+gofakeit
+golangci
+gonanoid
 lipgloss
-Revisioned
+matoous
+nocamel
+revisioned
+sandboxing
+stretchr
+testcmp
 testsize
+vektra
 worktree
 worktrees

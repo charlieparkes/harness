@@ -4,8 +4,8 @@ import (
 	"context"
 	"slices"
 
-	"github.com/charlieparkes/harness/internal/harness"
-	"github.com/charlieparkes/harness/internal/harness/model"
+	"github.com/charlieparkes/harness/internal/domain"
+	"github.com/charlieparkes/harness/internal/domain/model"
 )
 
 func (s *Store) ListTasks(ctx context.Context) ([]model.Task, error) {
@@ -28,7 +28,7 @@ func (s *Store) GetTask(ctx context.Context, id string) (model.Task, error) {
 			return task, nil
 		}
 	}
-	return model.Task{}, harness.ErrTaskNotFound
+	return model.Task{}, domain.ErrTaskNotFound
 }
 
 func (s *Store) CreateTask(ctx context.Context, task model.Task) (model.Task, error) {

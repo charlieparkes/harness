@@ -5,12 +5,12 @@ import (
 	"testing"
 
 	"github.com/charlieparkes/go-testsize"
-	"github.com/charlieparkes/harness/internal/harness"
+	"github.com/charlieparkes/harness/internal/domain"
 )
 
 // AgentStoreTests checks GetRunningAgentCount on a harness.Store.
 // newStore must return a clean store; it is called once per subtest.
-func AgentStoreTests(t *testing.T, newStore func(*testing.T) harness.Store) {
+func AgentStoreTests(t *testing.T, newStore func(*testing.T) domain.Store) {
 	t.Helper()
 	t.Run("GetRunningAgentCount", func(t *testing.T) {
 		t.Parallel()

@@ -32,6 +32,7 @@
 ## Rules
 
 - Never run git commands without explicit user instruction.
+- Never write code comments without explicit permission.
 
 ## Feature Development
 
@@ -49,3 +50,7 @@
     - small: example_test.go
     - medium: example_medium_test.go
     - large: example_large_test.go
+
+## Backwards Compatibility
+
+- Greenfield project. Not yet required. Change interfaces, schemas, contracts, and APIs without concern for the impact to consumers.

@@ -1,7 +1,7 @@
 package stub
 
 import (
-	"github.com/charlieparkes/harness/internal/harness/model"
+	"github.com/charlieparkes/harness/internal/domain/model"
 )
 
 // Store is a temporary in-memory store that returns generated stub tasks.

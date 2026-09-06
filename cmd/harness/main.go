@@ -8,10 +8,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/charlieparkes/harness/internal/harness/fake"
-	"github.com/charlieparkes/harness/internal/harness/ui"
+	"github.com/charlieparkes/harness/internal/domain/fake"
 	"github.com/charlieparkes/harness/internal/logger"
 	"github.com/charlieparkes/harness/internal/store/stub"
+	"github.com/charlieparkes/harness/internal/tui"
 	"github.com/urfave/cli/v3"
 )
 
@@ -52,7 +52,7 @@ func run(logger *slog.Logger) (err error) {
 		Name:  "harness",
 		Usage: "create a consistent, repeatable experience when using agents to augment any task",
 		Action: func(ctx context.Context, _ *cli.Command) error {
-			return ui.Run(ctx, store)
+			return tui.Run(ctx, store)
 		},
 	}
 

@@ -7,6 +7,9 @@
       "scope": "folder"
     }
   },
+  "cSpell.ignorePaths": [
+    "**/*_enum.go"
+  ],
   "go.alternateTools": {
     "go": "${env:HOME}/.asdf/shims/go"
   },

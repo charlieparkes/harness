@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/charlieparkes/go-testsize"
-	"github.com/charlieparkes/harness/internal/harness"
-	"github.com/charlieparkes/harness/internal/harness/model"
+	"github.com/charlieparkes/harness/internal/domain"
+	"github.com/charlieparkes/harness/internal/domain/model"
 )
 
 // TaskStoreTests checks Task methods on a harness.Store.
 // newStore must return a clean store; it is called once per subtest.
-func TaskStoreTests(t *testing.T, newStore func(*testing.T) harness.Store) {
+func TaskStoreTests(t *testing.T, newStore func(*testing.T) domain.Store) {
 	t.Helper()
 	t.Run("ListTasks", func(t *testing.T) {
 		t.Parallel()
@@ -135,7 +135,7 @@ func TaskStoreTests(t *testing.T, newStore func(*testing.T) harness.Store) {
 			createTasks(ctx, t, store, []model.Task{{ID: "exists", Title: "here", Status: model.TaskStatusReady}})
 
 			got, err := store.GetTask(ctx, "missing")
-			requireErrIs(t, err, harness.ErrTaskNotFound)
+			requireErrIs(t, err, domain.ErrTaskNotFound)
 			if !reflect.DeepEqual(got, model.Task{}) {
 				t.Fatalf("GetTask() = %#v, want zero Task", got)
 			}
@@ -335,7 +335,7 @@ func listOrderTasks() []model.Task {
 	}
 }
 
-func createTasks(ctx context.Context, t *testing.T, store harness.Store, tasks []model.Task) {
+func createTasks(ctx context.Context, t *testing.T, store domain.Store, tasks []model.Task) {
 	t.Helper()
 	for _, task := range tasks {
 		if _, err := store.CreateTask(ctx, task); err != nil {
