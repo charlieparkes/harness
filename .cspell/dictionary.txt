@@ -4,6 +4,7 @@ charmbracelet
 colorprofile
 Crockford
 lipgloss
+Revisioned
 testsize
 worktree
 worktrees

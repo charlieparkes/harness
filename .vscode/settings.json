@@ -1,10 +1,18 @@
 {
-    "cSpell.customDictionaries": {
-        "harness-dictionary": {
-            "name": "harness-dictionary",
-            "path": "${workspaceFolder:harness}/.cspell/dictionary.txt",
-            "addWords": true,
-            "scope": "folder"
-        }
+  "cSpell.customDictionaries": {
+    "harness-dictionary": {
+      "name": "harness-dictionary",
+      "path": "${workspaceFolder:harness}/.cspell/dictionary.txt",
+      "addWords": true,
+      "scope": "folder"
     }
+  },
+  "go.alternateTools": {
+    "go": "${env:HOME}/.asdf/shims/go"
+  },
+  "go.toolsEnvVars": {
+    "ASDF_DIR": "${env:HOME}/.asdf",
+    "ASDF_DATA_DIR": "${env:HOME}/.asdf",
+    "PATH": "${env:HOME}/.asdf/shims:${env:HOME}/.asdf/bin:${env:PATH}"
+  }
 }
