@@ -1,5 +1,5 @@
 ---
-name: create-documentation
+name: harness-docs-create
 version: 1.0.0
 description: |
   Instructions on how to write new documentation.

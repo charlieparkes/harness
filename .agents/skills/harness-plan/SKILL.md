@@ -1,5 +1,5 @@
 ---
-name: my-plan
+name: harness-plan
 version: 1.0.0
 description: |
   Define consistent standard for writing plans.

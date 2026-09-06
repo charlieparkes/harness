@@ -1,5 +1,5 @@
 ---
-name: promote-documentation
+name: harness-docs-promote
 version: 1.0.0
 description: |
   Instructions on how to promote and codify new or modified documentation.
