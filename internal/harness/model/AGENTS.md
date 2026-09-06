@@ -1,0 +1,1 @@
+- When adding, removing, or modifying a model, verify if models match documentation in `docs/canonical/data_design.md`. Notify the user of deviations, and follow the apocryphal documentation process to stage an update.
