@@ -1,6 +1,8 @@
 package agentmodel
 
 import (
+	"time"
+
 	"github.com/charlieparkes/go-transform"
 	"github.com/charlieparkes/harness/internal/domain/model"
 )
@@ -37,4 +39,29 @@ func NewPlan(p model.Plan) Plan {
 		DefinitionOfDone: definitionOfDone,
 		Risks:            risks,
 	}
+}
+
+func (p Plan) Apply(prev model.Plan, now time.Time) model.Plan {
+	rev := prev.Revision + 1
+
+	changed := prev.Title.Set(rev, p.Title)
+	changed = prev.Description.Set(rev, p.Description) || changed
+	changed = prev.Risks.Set(rev, p.Risks) || changed
+	changed = prev.DefinitionOfDone.Set(rev, p.DefinitionOfDone) || changed
+
+	prevSteps, _ := prev.Steps.Value()
+	prevByID := make(map[string]model.Step, len(prevSteps))
+	for _, s := range prevSteps {
+		prevByID[s.ID] = s
+	}
+	steps := transform.Slice(p.Steps, func(s Step) model.Step {
+		return s.Apply(prevByID[s.ID], rev)
+	})
+	changed = prev.Steps.Set(rev, steps) || changed
+
+	if changed {
+		prev.Revision = rev
+		prev.UpdatedAt = &now
+	}
+	return prev
 }

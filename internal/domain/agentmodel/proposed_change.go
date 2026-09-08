@@ -24,6 +24,13 @@ func NewProposedChange(c model.ProposedChange) ProposedChange {
 	}
 }
 
+func (c ProposedChange) Apply(prev model.ProposedChange, rev int64) model.ProposedChange {
+	prev.Description = c.Description
+	prev.Reason = c.Reason
+	prev.Files.Set(rev, c.Files)
+	return prev
+}
+
 type ProposedTest struct {
 	ProposedChange
 
@@ -36,4 +43,10 @@ func NewProposedTest(c model.ProposedTest) ProposedTest {
 		ProposedChange: NewProposedChange(c.ProposedChange),
 		TestCases:      testCases,
 	}
+}
+
+func (t ProposedTest) apply(prev model.ProposedTest, rev int64) model.ProposedTest {
+	prev.ProposedChange = t.Apply(prev.ProposedChange, rev)
+	prev.TestCases.Set(rev, t.TestCases)
+	return prev
 }

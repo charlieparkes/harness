@@ -7,7 +7,7 @@ require (
 	charm.land/bubbletea/v2 v2.0.9
 	charm.land/lipgloss/v2 v2.0.6
 	github.com/brianvoe/gofakeit/v7 v7.16.0
-	github.com/charlieparkes/go-testcmp v1.0.0
+	github.com/charlieparkes/go-testcmp v1.0.1
 	github.com/charlieparkes/go-testsize v1.0.0
 	github.com/charlieparkes/go-transform v1.0.0
 	github.com/charmbracelet/colorprofile v0.4.3
