@@ -2,6 +2,7 @@ package agentmodel
 
 import (
 	"github.com/charlieparkes/harness/internal/domain/model"
+	"github.com/charlieparkes/harness/internal/lineage"
 )
 
 // ReviewFindingEvidence describes one logical piece of evidence for a finding.
@@ -12,9 +13,16 @@ type ReviewFindingEvidence struct {
 }
 
 func NewReviewFindingEvidence(e model.ReviewFindingEvidence) ReviewFindingEvidence {
-	files, _ := e.Files.Value()
+	files := e.Files.Value()
 	return ReviewFindingEvidence{
 		Description: e.Description,
 		Files:       files,
+	}
+}
+
+func (e ReviewFindingEvidence) model() model.ReviewFindingEvidence {
+	return model.ReviewFindingEvidence{
+		Description: e.Description,
+		Files:       lineage.NewRevisionedField(e.Files),
 	}
 }

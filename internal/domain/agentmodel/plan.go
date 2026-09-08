@@ -1,8 +1,6 @@
 package agentmodel
 
 import (
-	"time"
-
 	"github.com/charlieparkes/go-transform"
 	"github.com/charlieparkes/harness/internal/domain/model"
 )
@@ -27,11 +25,11 @@ type Plan struct {
 }
 
 func NewPlan(p model.Plan) Plan {
-	title, _ := p.Title.Value()
-	description, _ := p.Description.Value()
-	steps, _ := p.Steps.Value()
-	definitionOfDone, _ := p.DefinitionOfDone.Value()
-	risks, _ := p.Risks.Value()
+	title := p.Title.Value()
+	description := p.Description.Value()
+	steps := p.Steps.Value()
+	definitionOfDone := p.DefinitionOfDone.Value()
+	risks := p.Risks.Value()
 	return Plan{
 		Title:            title,
 		Description:      description,
@@ -41,27 +39,17 @@ func NewPlan(p model.Plan) Plan {
 	}
 }
 
-func (p Plan) Apply(prev model.Plan, now time.Time) model.Plan {
+func (p Plan) Apply(prev model.Plan) model.Plan {
 	rev := prev.Revision + 1
 
 	changed := prev.Title.Set(rev, p.Title)
 	changed = prev.Description.Set(rev, p.Description) || changed
 	changed = prev.Risks.Set(rev, p.Risks) || changed
 	changed = prev.DefinitionOfDone.Set(rev, p.DefinitionOfDone) || changed
-
-	prevSteps, _ := prev.Steps.Value()
-	prevByID := make(map[string]model.Step, len(prevSteps))
-	for _, s := range prevSteps {
-		prevByID[s.ID] = s
-	}
-	steps := transform.Slice(p.Steps, func(s Step) model.Step {
-		return s.Apply(prevByID[s.ID], rev)
-	})
-	changed = prev.Steps.Set(rev, steps) || changed
+	changed = prev.Steps.Set(rev, transform.Slice(p.Steps, Step.model)) || changed
 
 	if changed {
 		prev.Revision = rev
-		prev.UpdatedAt = &now
 	}
 	return prev
 }

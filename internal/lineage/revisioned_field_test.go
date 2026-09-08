@@ -1,7 +1,6 @@
 package lineage
 
 import (
-	"slices"
 	"testing"
 
 	"github.com/charlieparkes/go-testcmp"
@@ -140,24 +139,19 @@ func TestRevisionedFieldSet(t *testing.T) {
 	t.Run("records on empty field", func(t *testing.T) {
 		t.Parallel()
 		var field RevisionedField[int]
-		if ok := field.Set(1, 10); !ok {
-			t.Fatalf("Set(1, 10) = false, want true")
-		}
-		require.Equal(t, 10, field.Value())
-		if got := field.Revisions(); !slices.Equal(got, []int64{1}) {
-			t.Fatalf("Revisions() = %v, want [1]", got)
-		}
+		require.True(t, field.Set(1, 10))
+		testcmp.Compare(t, field, RevisionedField[int]{
+			Values: []RevisionedValue[int]{
+				{Revision: 1, Value: 10},
+			},
+		})
 	})
 
 	t.Run("skips zero value on empty field", func(t *testing.T) {
 		t.Parallel()
 		var field RevisionedField[[]string]
-		if ok := field.Set(1, nil); ok {
-			t.Fatalf("Set(1, nil) = true, want false")
-		}
-		if got := field.Revisions(); len(got) != 0 {
-			t.Fatalf("Revisions() = %v, want []", got)
-		}
+		require.False(t, field.Set(1, nil))
+		testcmp.Compare(t, field, RevisionedField[[]string]{})
 	})
 
 	t.Run("records newer revision with changed value", func(t *testing.T) {
@@ -165,13 +159,13 @@ func TestRevisionedFieldSet(t *testing.T) {
 		field := RevisionedField[int]{
 			Values: []RevisionedValue[int]{{Revision: 1, Value: 10}},
 		}
-		if ok := field.Set(2, 20); !ok {
-			t.Fatalf("Set(2, 20) = false, want true")
-		}
-		require.Equal(t, 20, field.Value())
-		if got := field.Revisions(); !slices.Equal(got, []int64{1, 2}) {
-			t.Fatalf("Revisions() = %v, want [1 2]", got)
-		}
+		require.True(t, field.Set(2, 20))
+		testcmp.Compare(t, field, RevisionedField[int]{
+			Values: []RevisionedValue[int]{
+				{Revision: 1, Value: 10},
+				{Revision: 2, Value: 20},
+			},
+		})
 	})
 
 	t.Run("skips newer revision with equal value", func(t *testing.T) {
@@ -179,12 +173,10 @@ func TestRevisionedFieldSet(t *testing.T) {
 		field := RevisionedField[[]string]{
 			Values: []RevisionedValue[[]string]{{Revision: 1, Value: []string{"a", "b"}}},
 		}
-		if ok := field.Set(2, []string{"a", "b"}); ok {
-			t.Fatalf("Set(2, [a b]) = true, want false")
-		}
-		if got := field.Revisions(); !slices.Equal(got, []int64{1}) {
-			t.Fatalf("Revisions() = %v, want [1]", got)
-		}
+		require.False(t, field.Set(2, []string{"a", "b"}))
+		testcmp.Compare(t, field, RevisionedField[[]string]{
+			Values: []RevisionedValue[[]string]{{Revision: 1, Value: []string{"a", "b"}}},
+		})
 	})
 
 	t.Run("rejects revision equal to or older than latest", func(t *testing.T) {
@@ -192,15 +184,11 @@ func TestRevisionedFieldSet(t *testing.T) {
 		field := RevisionedField[int]{
 			Values: []RevisionedValue[int]{{Revision: 2, Value: 20}},
 		}
-		if ok := field.Set(2, 30); ok {
-			t.Fatalf("Set(2, 30) = true, want false")
-		}
-		if ok := field.Set(1, 30); ok {
-			t.Fatalf("Set(1, 30) = true, want false")
-		}
-		if got := field.Revisions(); !slices.Equal(got, []int64{2}) {
-			t.Fatalf("Revisions() = %v, want [2]", got)
-		}
+		require.False(t, field.Set(2, 30))
+		require.False(t, field.Set(1, 30))
+		testcmp.Compare(t, field, RevisionedField[int]{
+			Values: []RevisionedValue[int]{{Revision: 2, Value: 20}},
+		})
 	})
 }
 

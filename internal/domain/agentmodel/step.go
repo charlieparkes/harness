@@ -55,30 +55,15 @@ func NewStep(step model.Step) Step {
 	}
 }
 
-func (s Step) Apply(prev model.Step, rev int64) model.Step {
-	prev.ID = s.ID
-	prev.Title = s.Title
-	prev.Summary = s.Summary
-	prev.Verifications = s.Verifications
-	prev.Risks = s.Risks
-	prev.Dependencies = s.Dependencies
-	prev.ProposedChanges = applyByIndex(s.ProposedChanges, prev.ProposedChanges, func(c ProposedChange, p model.ProposedChange) model.ProposedChange {
-		return c.Apply(p, rev)
-	})
-	prev.ProposedTests = applyByIndex(s.ProposedTests, prev.ProposedTests, func(t ProposedTest, p model.ProposedTest) model.ProposedTest {
-		return t.apply(p, rev)
-	})
-	return prev
-}
-
-func applyByIndex[I, O any](in []I, prev []O, fn func(I, O) O) []O {
-	out := make([]O, len(in))
-	for i, v := range in {
-		var p O
-		if i < len(prev) {
-			p = prev[i]
-		}
-		out[i] = fn(v, p)
+func (s Step) model() model.Step {
+	return model.Step{
+		ID:              s.ID,
+		Title:           s.Title,
+		Summary:         s.Summary,
+		ProposedChanges: transform.Slice(s.ProposedChanges, ProposedChange.model),
+		ProposedTests:   transform.Slice(s.ProposedTests, ProposedTest.model),
+		Verifications:   s.Verifications,
+		Risks:           s.Risks,
+		Dependencies:    s.Dependencies,
 	}
-	return out
 }

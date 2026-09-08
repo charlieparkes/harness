@@ -2,7 +2,6 @@ package agentmodel
 
 import (
 	"testing"
-	"time"
 
 	"github.com/charlieparkes/go-testcmp"
 	"github.com/charlieparkes/go-testsize"
@@ -30,12 +29,10 @@ func TestPlanApplyRoundTrip(t *testing.T) {
 	t.Parallel()
 	testsize.Small(t)
 
-	now := time.Date(2026, 9, 7, 12, 0, 0, 0, time.UTC)
 	doc := testPlanDoc()
-	plan := doc.Apply(model.Plan{ID: "plan-1", TaskID: "task-1"}, now)
+	plan := doc.Apply(model.Plan{ID: "plan-1", TaskID: "task-1"})
 
 	require.Equal(t, int64(1), plan.Revision)
-	require.Equal(t, &now, plan.UpdatedAt)
 	require.Equal(t, "plan-1", plan.ID)
 	require.Equal(t, "task-1", plan.TaskID)
 
@@ -47,14 +44,11 @@ func TestPlanApplyIdempotent(t *testing.T) {
 	t.Parallel()
 	testsize.Small(t)
 
-	now := time.Date(2026, 9, 7, 12, 0, 0, 0, time.UTC)
-	later := now.Add(time.Hour)
 	doc := testPlanDoc()
-	plan := doc.Apply(model.Plan{ID: "plan-1", TaskID: "task-1"}, now)
-	plan = doc.Apply(plan, later)
+	plan := doc.Apply(model.Plan{ID: "plan-1", TaskID: "task-1"})
+	plan = doc.Apply(plan)
 
 	require.Equal(t, int64(1), plan.Revision)
-	require.Equal(t, &now, plan.UpdatedAt)
 
 	require.Equal(t, []int64{1}, plan.Title.Revisions())
 	require.Equal(t, []int64{1}, plan.Description.Revisions())
@@ -62,7 +56,7 @@ func TestPlanApplyIdempotent(t *testing.T) {
 	require.Equal(t, []int64{1}, plan.DefinitionOfDone.Revisions())
 	require.Equal(t, []int64{1}, plan.Steps.Revisions())
 
-	steps, _ := plan.Steps.Value()
+	steps := plan.Steps.Value()
 	require.Equal(t, []int64{1}, steps[0].ProposedChanges[0].Files.Revisions())
 }
 
@@ -70,9 +64,7 @@ func TestPlanApplyPartialChange(t *testing.T) {
 	t.Parallel()
 	testsize.Small(t)
 
-	now := time.Date(2026, 9, 7, 12, 0, 0, 0, time.UTC)
-	later := now.Add(time.Hour)
-	plan := testPlanDoc().Apply(model.Plan{ID: "plan-1", TaskID: "task-1"}, now)
+	plan := testPlanDoc().Apply(model.Plan{ID: "plan-1", TaskID: "task-1"})
 
 	line := int64(10)
 	doc := testPlanDoc()
@@ -81,16 +73,15 @@ func TestPlanApplyPartialChange(t *testing.T) {
 		{TargetID: "t1", Path: "a.go", Line: &line, Exists: true},
 	}
 
-	plan = doc.Apply(plan, later)
+	plan = doc.Apply(plan)
 	require.Equal(t, int64(2), plan.Revision)
-	require.Equal(t, &later, plan.UpdatedAt)
 
 	require.Equal(t, []int64{1, 2}, plan.Title.Revisions())
 	require.Equal(t, []int64{1}, plan.Description.Revisions())
 	require.Equal(t, []int64{1, 2}, plan.Steps.Revisions())
 
-	steps, _ := plan.Steps.Value()
-	require.Equal(t, []int64{1, 2}, steps[0].ProposedChanges[0].Files.Revisions())
+	steps := plan.Steps.Value()
+	require.Equal(t, []int64{1}, steps[0].ProposedChanges[0].Files.Revisions())
 	require.Equal(t, []int64{1}, steps[1].ProposedChanges[0].Files.Revisions())
 }
 

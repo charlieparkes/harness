@@ -2,6 +2,7 @@ package agentmodel
 
 import (
 	"github.com/charlieparkes/harness/internal/domain/model"
+	"github.com/charlieparkes/harness/internal/lineage"
 )
 
 type ProposedChange struct {
@@ -16,7 +17,7 @@ type ProposedChange struct {
 }
 
 func NewProposedChange(c model.ProposedChange) ProposedChange {
-	files, _ := c.Files.Value()
+	files := c.Files.Value()
 	return ProposedChange{
 		Description: c.Description,
 		Reason:      c.Reason,
@@ -24,11 +25,12 @@ func NewProposedChange(c model.ProposedChange) ProposedChange {
 	}
 }
 
-func (c ProposedChange) Apply(prev model.ProposedChange, rev int64) model.ProposedChange {
-	prev.Description = c.Description
-	prev.Reason = c.Reason
-	prev.Files.Set(rev, c.Files)
-	return prev
+func (c ProposedChange) model() model.ProposedChange {
+	return model.ProposedChange{
+		Description: c.Description,
+		Reason:      c.Reason,
+		Files:       lineage.NewRevisionedField(c.Files),
+	}
 }
 
 type ProposedTest struct {
@@ -38,15 +40,16 @@ type ProposedTest struct {
 }
 
 func NewProposedTest(c model.ProposedTest) ProposedTest {
-	testCases, _ := c.TestCases.Value()
+	testCases := c.TestCases.Value()
 	return ProposedTest{
 		ProposedChange: NewProposedChange(c.ProposedChange),
 		TestCases:      testCases,
 	}
 }
 
-func (t ProposedTest) apply(prev model.ProposedTest, rev int64) model.ProposedTest {
-	prev.ProposedChange = t.Apply(prev.ProposedChange, rev)
-	prev.TestCases.Set(rev, t.TestCases)
-	return prev
+func (t ProposedTest) model() model.ProposedTest {
+	return model.ProposedTest{
+		ProposedChange: t.ProposedChange.model(),
+		TestCases:      lineage.NewRevisionedField(t.TestCases),
+	}
 }

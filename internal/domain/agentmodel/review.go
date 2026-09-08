@@ -1,6 +1,8 @@
 package agentmodel
 
 import (
+	"time"
+
 	"github.com/charlieparkes/go-transform"
 	"github.com/charlieparkes/harness/internal/domain/model"
 )
@@ -20,14 +22,29 @@ type Review struct {
 }
 
 func NewReview(r model.Review) Review {
-	decision, _ := r.Decision.Value()
-	observations, _ := r.Observations.Value()
-	verifications, _ := r.Verifications.Value()
-	findings, _ := r.Findings.Value()
+	decision := r.Decision.Value()
+	observations := r.Observations.Value()
+	verifications := r.Verifications.Value()
+	findings := r.Findings.Value()
 	return Review{
 		Decision:      decision,
 		Observations:  observations,
 		Verifications: verifications,
 		Findings:      transform.Slice(findings, NewReviewFinding),
 	}
+}
+
+func (r Review) Apply(prev model.Review, now time.Time) model.Review {
+	rev := prev.Revision + 1
+
+	changed := prev.Decision.Set(rev, r.Decision)
+	changed = prev.Observations.Set(rev, r.Observations) || changed
+	changed = prev.Verifications.Set(rev, r.Verifications) || changed
+	changed = prev.Findings.Set(rev, transform.Slice(r.Findings, ReviewFinding.model)) || changed
+
+	if changed {
+		prev.Revision = rev
+		prev.UpdatedAt = &now
+	}
+	return prev
 }
