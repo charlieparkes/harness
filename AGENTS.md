@@ -50,6 +50,8 @@
     - small: example_test.go
     - medium: example_medium_test.go
     - large: example_large_test.go
+- Write test assertions using stretchr/testify. Use github.com/stretchr/testify/require and github.com/stretchr/testify/assert. Do not use `t.Fatal` or `t.Fatalf` unless a satisfactory method is unavailable in stretchr/testify.
+- When comparing two structs, use github.com/charlieparkes/go-testcmp `testcmp.Compare` instead of comparing individual fields.
 
 ## Backwards Compatibility
 
