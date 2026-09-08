@@ -4,7 +4,7 @@
 
 - [ ] Define storage pattern for json document driven tables. 
     - [ ] How are updates applied to the domain model? Standardize way that agentmodel returned by an LLM response is applied to a domain model. Increment revision on domain model, and set new revisioned value on each field? Should any fields be ignored?
-    - [ ] How is the domain model reflected in the store? Likely the domain model is converted to json, and stored in a "document" column in a store table. Eliminate all links tables in the store. Store everything in top level model aligned tables. Some data from the domain model is pulled out to table columns. For example, ID, revision, timestamps. Also, foreign keys, if foreign key represents another top level model.
+    - [ ] How is the domain model reflected in the store? Likely the domain model is converted to json, and stored in a "document" column in a store table. Represent stored data by defining a `{ModelName}Record` struct for every top level entity stored to the database. Eliminate all links tables in the store. Store everything in top level model aligned tables. Some data from the domain model is pulled out to table columns. For example, ID, revision, timestamps. Also, foreign keys, if foreign key represents another top level model.
 - [ ] Align documentation/implementation for agent models, domain models, and store models
 
 ## Medium Priority
