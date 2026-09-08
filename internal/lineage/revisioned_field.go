@@ -1,7 +1,7 @@
 package lineage
 
 import (
-	"slices"
+	"reflect"
 )
 
 // RevisionedField represents all values of type FieldType for field FieldName.
@@ -14,7 +14,7 @@ func NewRevisionedField[FieldType any](values ...FieldType) RevisionedField[Fiel
 	if len(values) > 0 {
 		revisionedValues = make([]RevisionedValue[FieldType], len(values))
 		for i, v := range values {
-			revisionedValues[int64(i)] = NewRevisionedValue(int64(i), v)
+			revisionedValues[i] = NewRevisionedValue(int64(i)+1, v)
 		}
 	}
 	return RevisionedField[FieldType]{
@@ -37,7 +37,7 @@ func (f RevisionedField[FieldType]) Value() (FieldType, bool) {
 		var zero FieldType
 		return zero, false
 	}
-	return f.Values[slices.Max(f.Revisions())].Value, true
+	return f.Values[len(f.Values)-1].Value, true
 }
 
 // ValueAt returns the most recent value of [RevisionedField] in relation to a given revision.
@@ -47,28 +47,32 @@ func (f RevisionedField[FieldType]) ValueAt(revision int64) (FieldType, bool) {
 		var zero FieldType
 		return zero, false
 	}
-	revisions := f.Revisions()
-	oldest := slices.Min(revisions)
-	if oldest > revision {
+	if revision < f.Values[0].Revision {
 		var zero FieldType
 		return zero, false
 	}
-	latest := slices.Max(revisions)
-	if latest > revision {
-		revisions = slices.DeleteFunc(revisions, func(r int64) bool {
-			return r > revision
-		})
-		latest = slices.Max(revisions)
+	value := f.Values[0].Value
+	for _, v := range f.Values {
+		if v.Revision > revision {
+			break
+		}
+		value = v.Value
 	}
-	return f.Values[latest].Value, true
+	return value, true
 }
 
-// Set value at particular revision.
-// Must be newer than any known revision.
-// Returns bool indicating success.
-func (f RevisionedField[FieldType]) Set(revision int64, value FieldType) bool {
-	if revision <= slices.Max(f.Revisions()) {
-		return false
+// Set records value at a particular revision.
+// The revision must be newer than any known revision, and the value must
+// differ from the latest value. Returns true only when a value was recorded.
+func (f *RevisionedField[FieldType]) Set(revision int64, value FieldType) bool {
+	if len(f.Values) > 0 {
+		last := f.Values[len(f.Values)-1]
+		if revision <= last.Revision {
+			return false
+		}
+		if reflect.DeepEqual(last.Value, value) {
+			return false
+		}
 	}
 	f.Values = append(f.Values, NewRevisionedValue(revision, value))
 	return true
