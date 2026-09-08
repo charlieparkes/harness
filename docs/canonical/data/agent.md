@@ -1,6 +1,6 @@
 ```
-date: 2026-09-07
-version: v1.0.0
+date: 2026-09-08
+version: v1.1.0
 ```
 
 ---
@@ -9,7 +9,7 @@ version: v1.0.0
 
 Implemented by `internal/domain/agentmodel`.
 
-The agent models define the JSON documents that Harness accepts from an agent. Harness rejects responses that do not match an accepted model. It sanitizes and verifies accepted responses before storage.
+The agent models define the JSON documents that Harness exchanges with an agent. Harness rejects responses that do not match an accepted model. It sanitizes and verifies accepted responses before storage.
 
 ## Conventions
 
@@ -20,6 +20,7 @@ The agent models define the JSON documents that Harness accepts from an agent. H
 - A question ID typically uses `Q1`, `Q2`, or a similar value.
 - A review finding ID typically uses `R1`, `R2`, or a similar value.
 - `Step.dependencies` contains agent-sourced step IDs.
+- `Answer.question_id` contains an agent-sourced question ID.
 - `File.line` is nullable.
 - `ProposedTest` includes the fields from `ProposedChange` at the same object level.
 
@@ -29,6 +30,7 @@ The agent models define the JSON documents that Harness accepts from an agent. H
 | ----------- | -------------------------------------------- |
 | `Plan`      | Defines the steps to complete a task.        |
 | `Questions` | Requests answers from the user.              |
+| `Answer`    | Provides the user answer for one question.   |
 | `Review`    | Records the result of one task review pass.  |
 
 ## Logical Model
@@ -36,6 +38,7 @@ The agent models define the JSON documents that Harness accepts from an agent. H
 ```mermaid
 erDiagram
     QUESTIONS ||--o{ QUESTION : contains
+    QUESTION ||--o| ANSWER : has
     PLAN ||--o{ STEP : contains
     STEP ||--o{ PROPOSED_CHANGE : changes
     STEP ||--o{ PROPOSED_TEST : tests
@@ -110,7 +113,20 @@ A step contains sufficient information to execute it without other plan context.
 | `question`          | `string`        | Question of one to three sentences     |
 | `suggested_answers` | `array<string>` | Answers suggested by the agent         |
 
-The agent model does not include the user's answer.
+Harness sends the user answer in a separate `Answer` document.
+
+## Answer
+
+`Answer` provides the user answer for one question.
+
+| Field          | Type     | Notes                             |
+| -------------- | -------- | --------------------------------- |
+| `question_id`  | `string` | Agent-sourced question identifier |
+| `answer`       | `string` | User answer                       |
+
+### Constraints and invariants
+
+- `answer` must be populated on the domain question before Harness creates an `Answer` document.
 
 ## Review
 

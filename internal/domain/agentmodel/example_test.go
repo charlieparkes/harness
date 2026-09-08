@@ -10,8 +10,9 @@ import (
 	"github.com/charlieparkes/harness/internal/lineage"
 )
 
-// This is a human-written example of the expected behavior when interacting with agent models.
-func TestExampleAgentModelUsage(t *testing.T) {
+// This is a human-written example of the expected behavior when translating between
+// domain models and agent models.
+func TestExampleUsage(t *testing.T) {
 	t.Parallel()
 	_ = testsize.Small(t)
 	now := time.Now().UTC().Truncate(time.Second)
