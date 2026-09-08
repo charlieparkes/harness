@@ -4,8 +4,66 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/charlieparkes/go-testcmp"
 	"github.com/charlieparkes/go-testsize"
+	"github.com/stretchr/testify/require"
 )
+
+func TestNewRevisionedField(t *testing.T) {
+	t.Parallel()
+	testsize.Small(t)
+
+	t.Run("no values", func(t *testing.T) {
+		t.Parallel()
+		testcmp.Compare(t, NewRevisionedField[int](), RevisionedField[int]{})
+	})
+
+	t.Run("records values at sequential revisions", func(t *testing.T) {
+		t.Parallel()
+		testcmp.Compare(t, NewRevisionedField(10, 20, 30), RevisionedField[int]{
+			Values: []RevisionedValue[int]{
+				{Revision: 1, Value: 10},
+				{Revision: 2, Value: 20},
+				{Revision: 3, Value: 30},
+			},
+		})
+	})
+
+	t.Run("skips leading zero value", func(t *testing.T) {
+		t.Parallel()
+		testcmp.Compare(t, NewRevisionedField(0, 10), RevisionedField[int]{
+			Values: []RevisionedValue[int]{
+				{Revision: 1, Value: 10},
+			},
+		})
+	})
+
+	t.Run("skips nil slice", func(t *testing.T) {
+		t.Parallel()
+		testcmp.Compare(t, NewRevisionedField[[]string](nil), RevisionedField[[]string]{})
+	})
+
+	t.Run("skips equal consecutive values", func(t *testing.T) {
+		t.Parallel()
+		testcmp.Compare(t, NewRevisionedField(10, 10, 20), RevisionedField[int]{
+			Values: []RevisionedValue[int]{
+				{Revision: 1, Value: 10},
+				{Revision: 2, Value: 20},
+			},
+		})
+	})
+
+	t.Run("records a later zero when it differs from the previous value", func(t *testing.T) {
+		t.Parallel()
+		testcmp.Compare(t, NewRevisionedField(10, 0, 20), RevisionedField[int]{
+			Values: []RevisionedValue[int]{
+				{Revision: 1, Value: 10},
+				{Revision: 2, Value: 0},
+				{Revision: 3, Value: 20},
+			},
+		})
+	})
+}
 
 func TestRevisionedFieldValue(t *testing.T) {
 	t.Parallel()
@@ -15,7 +73,6 @@ func TestRevisionedFieldValue(t *testing.T) {
 		name  string
 		field RevisionedField[int]
 		want  int
-		ok    bool
 	}{
 		{
 			name:  "empty",
@@ -29,22 +86,17 @@ func TestRevisionedFieldValue(t *testing.T) {
 				},
 			},
 			want: 20,
-			ok:   true,
 		},
 		{
 			name:  "latest of several",
 			field: revisionedIntField(),
 			want:  50,
-			ok:    true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, ok := tt.field.Value()
-			if ok != tt.ok || got != tt.want {
-				t.Fatalf("Value() = (%d, %t), want (%d, %t)", got, ok, tt.want, tt.ok)
-			}
+			require.Equal(t, tt.want, tt.field.Value())
 		})
 	}
 }
@@ -61,26 +113,22 @@ func TestRevisionedFieldValueAt(t *testing.T) {
 		field    RevisionedField[int]
 		revision int64
 		want     int
-		ok       bool
 	}{
 		{name: "empty field", field: empty, revision: 1},
 		{name: "zero revision", field: field, revision: 0},
 		{name: "negative revision", field: field, revision: -1},
 		{name: "before first value", field: field, revision: 1},
-		{name: "at first value", field: field, revision: 2, want: 20, ok: true},
-		{name: "between values", field: field, revision: 3, want: 20, ok: true},
-		{name: "at middle value", field: field, revision: 4, want: 40, ok: true},
-		{name: "after middle value", field: field, revision: 5, want: 40, ok: true},
-		{name: "at latest value", field: field, revision: 7, want: 50, ok: true},
-		{name: "after latest value", field: field, revision: 8, want: 50, ok: true},
+		{name: "at first value", field: field, revision: 2, want: 20},
+		{name: "between values", field: field, revision: 3, want: 20},
+		{name: "at middle value", field: field, revision: 4, want: 40},
+		{name: "after middle value", field: field, revision: 5, want: 40},
+		{name: "at latest value", field: field, revision: 7, want: 50},
+		{name: "after latest value", field: field, revision: 8, want: 50},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, ok := tt.field.ValueAt(tt.revision)
-			if ok != tt.ok || got != tt.want {
-				t.Fatalf("ValueAt(%d) = (%d, %t), want (%d, %t)", tt.revision, got, ok, tt.want, tt.ok)
-			}
+			require.Equal(t, tt.want, tt.field.ValueAt(tt.revision))
 		})
 	}
 }
@@ -95,11 +143,20 @@ func TestRevisionedFieldSet(t *testing.T) {
 		if ok := field.Set(1, 10); !ok {
 			t.Fatalf("Set(1, 10) = false, want true")
 		}
-		if got, ok := field.Value(); got != 10 || !ok {
-			t.Fatalf("Value() = (%d, %t), want (10, true)", got, ok)
-		}
+		require.Equal(t, 10, field.Value())
 		if got := field.Revisions(); !slices.Equal(got, []int64{1}) {
 			t.Fatalf("Revisions() = %v, want [1]", got)
+		}
+	})
+
+	t.Run("skips zero value on empty field", func(t *testing.T) {
+		t.Parallel()
+		var field RevisionedField[[]string]
+		if ok := field.Set(1, nil); ok {
+			t.Fatalf("Set(1, nil) = true, want false")
+		}
+		if got := field.Revisions(); len(got) != 0 {
+			t.Fatalf("Revisions() = %v, want []", got)
 		}
 	})
 
@@ -111,9 +168,7 @@ func TestRevisionedFieldSet(t *testing.T) {
 		if ok := field.Set(2, 20); !ok {
 			t.Fatalf("Set(2, 20) = false, want true")
 		}
-		if got, _ := field.Value(); got != 20 {
-			t.Fatalf("Value() = %d, want 20", got)
-		}
+		require.Equal(t, 20, field.Value())
 		if got := field.Revisions(); !slices.Equal(got, []int64{1, 2}) {
 			t.Fatalf("Revisions() = %v, want [1 2]", got)
 		}

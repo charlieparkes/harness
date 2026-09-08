@@ -9,7 +9,7 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.16.0
 	github.com/charlieparkes/go-testcmp v1.0.1
 	github.com/charlieparkes/go-testsize v1.0.0
-	github.com/charlieparkes/go-transform v1.0.0
+	github.com/charlieparkes/go-transform v1.0.1
 	github.com/charmbracelet/colorprofile v0.4.3
 	github.com/google/uuid v1.6.0
 	github.com/matoous/go-nanoid/v2 v2.1.1-0.20251203170756-2ab893bb7af4

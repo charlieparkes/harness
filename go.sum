@@ -32,6 +32,8 @@ github.com/charlieparkes/go-testsize v1.0.0 h1:wdUNYzr5slnlfhPTPvW/kQieo5bkOh/K9
 github.com/charlieparkes/go-testsize v1.0.0/go.mod h1:Qq9ya37/D8jnN7ZVeMhD+pRf6IueHUQfp0jF6z5z4W4=
 github.com/charlieparkes/go-transform v1.0.0 h1:GgVCWFT5V5FmMxhNRCMFDwEsWxuQDANq6RXyulVGifA=
 github.com/charlieparkes/go-transform v1.0.0/go.mod h1:0JCCiW3meezDKIFFoFgE+uspDDareWLpQuOcY8v9m3s=
+github.com/charlieparkes/go-transform v1.0.1 h1:a1IKlz34/67Hva0R+vkmGe0T8mlmkHS8kos0umEt3eg=
+github.com/charlieparkes/go-transform v1.0.1/go.mod h1:0JCCiW3meezDKIFFoFgE+uspDDareWLpQuOcY8v9m3s=
 github.com/charmbracelet/colorprofile v0.4.3 h1:QPa1IWkYI+AOB+fE+mg/5/4HRMZcaXex9t5KX76i20Q=
 github.com/charmbracelet/colorprofile v0.4.3/go.mod h1:/zT4BhpD5aGFpqQQqw7a+VtHCzu+zrQtt1zhMt9mR4Q=
 github.com/charmbracelet/ultraviolet v0.0.0-20260812204455-68fa937c71be h1:qEvkJy1sjJXP+yf8IH2o13NV+Rh4nIUHjaLNJ+pWxpI=
